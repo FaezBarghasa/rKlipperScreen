@@ -1,21 +1,27 @@
 # rKlipperScreen
 
-rKlipperScreen is a lightweight, ultra-high-performance touchscreen GUI for [Klipper](https://github.com/Klipper3d/klipper) 3D printers, interfacing via [Moonraker](https://github.com/arksine/moonraker). 
+rKlipperScreen is a lightweight, ultra-high-performance touchscreen GUI for [Klipper](https://github.com/Klipper3d/klipper) 3D printers, interfacing via [Moonraker](https://github.com/arksine/moonraker).
 
 It is a modern port and drop-in replacement for the original KlipperScreen, rewritten in **Rust** using the **Slint** UI framework.
 
+## Features
+
+*   **Ultra-Lightweight & Fast**: Experience minimal memory usage and extremely fast startup times by eliminating the overhead of a Python virtual environment and GTK3/GObject runtime.
+*   **Modern & Responsive UI**: Enjoy a fluid, GPU-accelerated interface powered by the Slint UI framework.
+*   **Seamless KlipperScreen Compatibility**: Directly reads and parses existing `KlipperScreen.conf` files, custom menu structures, and preheat profiles.
+*   **Robust Moonraker Integration**: Handles all Moonraker API communication efficiently.
+*   **Cross-Platform Potential**: Built with Rust and Slint, offering potential for broader platform support.
+
 ## Why rKlipperScreen?
 
-- **Ultra-Lightweight & Fast**: Eliminates the overhead of a Python virtual environment and GTK3/GObject runtime, leading to minimal memory usage and extremely fast startup times.
-- **Modern UI**: Rendered using the Slint UI framework, providing a fluid, GPU-accelerated interface.
-- **Drop-in Compatibility**: Reads and parses existing `KlipperScreen.conf` files, custom menu structures, preheat profiles, and handles Moonraker API communication.
+rKlipperScreen offers a superior alternative for Klipper users seeking enhanced performance, a modern user experience, and a more resource-efficient solution. By leveraging Rust and Slint, it provides a snappier, more reliable interface for controlling your 3D printer.
 
 ---
 
 ## Build & Run
 
 ### Prerequisites
-Make sure you have Rust and Cargo installed. If not, install via [rustup](https://rustup.rs/):
+Ensure you have Rust and Cargo installed. If not, install via [rustup](https://rustup.rs/):
 ```sh
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
@@ -29,7 +35,7 @@ cargo build --release
 ```
 
 ### Running rKlipperScreen
-Run the compiled binary:
+Execute the compiled binary from the project root:
 ```sh
 ./target/release/rklipperscreen [options]
 ```
@@ -52,7 +58,10 @@ Options:
 ---
 
 ## Translations
-Translations are handled via the Slint translation features and integrated dictionaries.
+Translations are handled via the Slint translation features and integrated dictionaries, making it easy to localize the interface.
+
+## Contributing
+We welcome contributions! If you're interested in improving rKlipperScreen, please check out our [contribution guidelines](CONTRIBUTING.md) (if available) or open an issue/pull request.
 
 ## About the Project
-rKlipperScreen is an open-source project building on the incredible design and concepts of KlipperScreen.
+rKlipperScreen is an open-source project that builds upon the incredible design and concepts of KlipperScreen, aiming to provide a modern, high-performance alternative for the Klipper community.

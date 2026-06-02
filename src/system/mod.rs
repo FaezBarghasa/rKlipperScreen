@@ -2,6 +2,7 @@ pub mod network;
 pub mod notifications;
 pub mod power;
 pub mod l10n;
+pub mod touch;
 
 pub use network::{WifiController, WifiNetwork};
 pub use notifications::send_system_notification;

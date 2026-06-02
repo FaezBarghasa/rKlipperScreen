@@ -101,8 +101,36 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 5. Initialize Translator
     init_global_translator(&config.language);
 
+    enum DisplayStack { Wayland, X11, DirectKms }
+    let wayland = std::env::var("WAYLAND_DISPLAY").is_ok();
+    let x11 = std::env::var("DISPLAY").is_ok();
+
+    let display_stack = if wayland {
+        DisplayStack::Wayland
+    } else if x11 {
+        DisplayStack::X11
+    } else {
+        DisplayStack::DirectKms
+    };
+
+    if let DisplayStack::DirectKms = display_stack {
+        info!("No X11 or Wayland session detected. Initializing Direct KMS backend.");
+        slint::platform::set_platform(Box::new(
+            i_slint_backend_linuxkms::BackendBuilder::default().build().map_err(|e| e.to_string())?
+        )).map_err(|e| e.to_string())?;
+    } else {
+        info!("Desktop environment detected (Wayland: {}, X11: {}), using default winit backend.", wayland, x11);
+    }
+
     // 6. Build Slint MainApp
     let app = MainApp::new()?;
+
+    if let DisplayStack::DirectKms = display_stack {
+        let app_weak = app.as_weak();
+        tokio::spawn(async move {
+            system::touch::start_touch_router(app_weak).await;
+        });
+    }
 
     // Dynamic icon loader helper based on active theme
     let load_theme_icon = {

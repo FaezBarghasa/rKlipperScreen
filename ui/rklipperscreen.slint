@@ -16,6 +16,9 @@ component IconButton inherits Rectangle {
     in-out property <bool> active: false;
     callback clicked;
 
+    min-width: 48px;
+    min-height: 48px;
+
     background: self.active ? Theme.active : (touch.pressed ? Theme.active : Theme.button-bg);
     border-radius: 6px;
     border-width: 1px;
