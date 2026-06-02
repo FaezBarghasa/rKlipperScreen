@@ -1,75 +1,54 @@
 # Developer Guide
 
-Basic setup for an environment to do development of KlipperScreen.
+Basic setup for an environment to develop and contribute to rKlipperScreen.
 
-!!! note "Alfrix Note:"
-    I use a standard Linux distro with a desktop environment.
-
-## Clone the repo
-Clone your fork, for example:
-```
+## Clone the Repository
+Clone the repository:
+```sh
 cd ~
-git clone https://github.com/klipperscreen/klipperscreen.git
+git clone https://github.com/FaezBarghasa/rKlipperScreen.git
 ```
 
-## Install the dependencies on the host
-The X11 or Wayland dependencies should not be needed if you are running a desktop GNU/Linux distro.
-See [scripts/system-dependencies.json](https://github.com/KlipperScreen/KlipperScreen/blob/master/scripts/system-dependencies.json)
-
-## Create a virtual environment
-For example:
-```bash
-cd ~/KlipperScreen
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r scripts/KlipperScreen-requirements.txt
-# this one is optional:
-pip install -r scripts/dev-requirements.txt
-```
-# Set configurations
-Create klipperscreen.conf and place it on the repo folder
-```
-[main]
-show_cursor=True
-# disable screen timeouts
-use_dpms=False
-screen_blanking=off
-# disable Fullscreen and start in a specified size
-# 480 x 320 is the minimum size to target
-width=480
-height=320
-# setting width or height will disable fullscreen and it's the intended behavior 
+## Install Rust Toolchain
+Ensure you have the latest stable Rust toolchain:
+```sh
+rustup update stable
 ```
 
-At this point you can add your actual printer section with the IP (and port of needed) to the config or/and add a virtual printer
-
-# Optional: Virtual printer
-
-You may use a virtual printer like it's described in the [klipper docs](https://www.klipper3d.org/Debugging.html#testing-with-simulavr), 
-or it's [alternative that uses docker](https://github.com/mainsail-crew/virtual-klipper-printer)
-
-Using a Virtual printer will need klipper and moonraker need to be installed in the machine too.
-
-!!! note
-    The virtual printer has various limitations,
-    like constant temperature and limited availability of pins,
-    it's not a limitation of klipperscreen
-
-### Pre-commit hooks
-
-This project uses [pre-commit](https://pre-commit.com/) to run linting and formatting checks before each commit.
-
-Install the hooks:
-```bash
-cd ~/KlipperScreen
-source .venv/bin/activate
-pip install pre-commit
-pre-commit install
+## Running the Application in Development Mode
+To build and run rKlipperScreen in debug mode:
+```sh
+cd ~/rKlipperScreen
+cargo run -- -c ~/KlipperScreen.conf
 ```
 
-This will automatically run `ruff check --fix` and `ruff format` on staged files before every commit.
+## Styling & Layout (Slint UI)
+The UI is defined using the Slint framework in `ui/rklipperscreen.slint`.
 
-## Optional: Configure the IDE
+- You can preview the layout in real-time by using the Slint extension in VS Code or RustRover.
+- Alternatively, you can use the command-line preview tool:
+  ```sh
+  cargo install slint-viewer
+  slint-viewer ui/rklipperscreen.slint
+  ```
 
-* Set interpreter to the virtual environment created
-* Set the run configuration to `KlipperScreen/screen.py`
+## Code Quality & Standards
+Before committing changes, ensure your code compiles, passes tests, and follows Rust style conventions:
+
+### Formatting
+Format the Rust source files:
+```sh
+cargo fmt --all
+```
+
+### Linting
+Check for code style guidelines and potential issues using Clippy:
+```sh
+cargo clippy --all-targets -- -D warnings
+```
+
+### Testing
+Run unit and integration tests:
+```sh
+cargo test
+```

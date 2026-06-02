@@ -1,41 +1,29 @@
-Multiple instances of KlipperScreen
+# Multiple instances of rKlipperScreen
 
 *Difficulty: Advanced*
 
-This article describes different methods of adding remote desktop clients (VNC or Xserver-XSDL) that do not support installing KS directly.
-If your remote device runs GNU/Linux then you should install KlipperScreen directly, instead of the methods described below.
+This article describes methods of running multiple independent instances of rKlipperScreen (e.g. for multiple connected displays or remote tablet screens via VNC/Xserver).
 
-The instances will be independent of each other and not a mirror.
+The instances will run independently of each other.
 
-## Notes on Performance
+---
 
-Beware that running multiple instances on the same device at the same time will consume more resources (memory and processing time)
-and can be taxing on lower end hardware, in my testing even a Raspberry Pi 3A can run multiple instances of KS,
-providing that it doesn't have any cameras or other advanced features.
+## Performance Notes
 
-!!! tip
-    You can view the system resource usage in the "System" panel of KlipperScreen or directly at the console with htop
-    Beware that even if the load seems okay at idle, during a print heavy dynamic loads can push the device over the threshold
-    and that may result in a Klipper error/failure, if it's running on the same device.
+Because rKlipperScreen is built in Rust, it is extremely efficient and resource usage is minimal compared to the legacy Python GUI. However, running multiple instances will still consume some system resources:
+- Keep track of GPU/CPU limits on low-end hardware like a Raspberry Pi 3A/Zero.
+- Use `htop` to monitor system resources.
 
-Performance will heavily depend on the devices used,
-if one of the devices is connected through the network, like for example a VNC client or Android Xserver-XSDL client,
-then the network will influence the response time of the interface.
+---
 
-## Option 1: Using the startup script method
+## Option 1: Using the launch script method
 
-*Advantage:* relatively easy to setup
-
-*Disadvantage:* starting or stopping the service will affect all the instances
-
-The default KlipperScreen service will launch the script
-
+Create or edit the launch script:
 ```sh
-nano $HOME/KlipperScreen/scripts/launch_KlipperScreen.sh
+nano $HOME/rKlipperScreen/scripts/launch_rKlipperScreen.sh
 ```
 
-Example script:
-
+Example script to launch a local screen and a remote display:
 ```sh
 #!/bin/bash
 /usr/bin/xinit $KS_XCLIENT &
@@ -43,90 +31,47 @@ DISPLAY=192.168.18.147:0 $KS_XCLIENT -c $HOME/.config/KlipperScreen/tablet.cfg &
 wait
 ```
 
-In this example the script launches a local instance for a screen connected to the host
-then it launches a server for xserver-xsdl client that is running at the defined IP,
-notice that the second instance uses a configuration that is specific to itself.
-
-Dont forget to restart the service to load the changes
+Restart the service to apply changes:
 ```sh
-sudo systemctl restart KlipperScreen
+sudo systemctl restart rKlipperScreen
 ```
 
-## Option 2: Using a separate service
+---
 
-*Advantage:* stopping and starting the service will only affect the desired instance
+## Option 2: Using a separate systemd service
 
-*Disadvantage:* configuration and setup is more complex
-
-Create a new service unit file
-
+Create a new service unit file:
 ```sh
-sudo nano /etc/systemd/system/KlipperScreen_tablet.service
+sudo nano /etc/systemd/system/rKlipperScreen_tablet.service
 ```
 
-Example of a service unit for an android tablet: (change the IP and username)
-```ini title="KlipperScreen_tablet.service"
+Example of a service unit:
+```ini title="rKlipperScreen_tablet.service"
 [Unit]
-Description=KlipperScreen Tablet
-StartLimitIntervalSec=0
-After=systemd-user-sessions.service plymouth-quit-wait.service
-ConditionPathExists=/dev/tty0
-Wants=dbus.socket systemd-logind.service
-After=dbus.socket systemd-logind.service
+Description=rKlipperScreen Tablet Instance
 After=moonraker.service
 
 [Service]
 Type=simple
 Restart=always
 RestartSec=2
-SupplementaryGroups=klipperscreen
-# username
 User=pi
-WorkingDirectory=/home/pi/KlipperScreen
+WorkingDirectory=/home/pi/rKlipperScreen
 Environment="DISPLAY=192.168.18.147:0"
-# Absolute paths are required, separate config is optional
-ExecStart=/home/pi/.KlipperScreen-env/bin/python /home/pi/KlipperScreen/screen.py -c /home/pi/.config/KlipperScreen/tablet.cfg
+ExecStart=/home/pi/rKlipperScreen/target/release/rklipperscreen -c /home/pi/.config/KlipperScreen/tablet.cfg
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-Test your new service
-```sh
-sudo systemctl start KlipperScreen_tablet
-```
-
-Optional: After verifying it works, make it load when the system starts
-```sh
-sudo systemctl enable KlipperScreen_tablet
-```
-
-if you made a mistake in the config you'll have to reload the service unit
+Reload, enable, and start the new service:
 ```sh
 sudo systemctl daemon-reload
+sudo systemctl enable rKlipperScreen_tablet
+sudo systemctl start rKlipperScreen_tablet
 ```
 
-Add the new service to moonraker so it can be started and stopped from the UI
-```sh
-nano $HOME/printer_data/moonraker.asvc
-```
-In the example above it was `KlipperScreen_tablet`. Beware that is case sensitive
-
-So in this case it would look something like this:
-``` title="moonraker.asvc"
-klipper_mcu
-webcamd
-MoonCord
-KlipperScreen
-KlipperScreen_tablet
-moonraker-telegram-bot
-moonraker-obico
-sonar
-crowsnest
-octoeverywhere
-```
-
-Restart moonraker
+Add the new service to Moonraker's allowed service control configuration in `moonraker.asvc` (if managed through the UI).
 ```sh
 sudo systemctl restart moonraker
 ```

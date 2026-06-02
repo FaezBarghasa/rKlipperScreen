@@ -1,0 +1,3 @@
+# Enable read/write permissions for input event interfaces matching touchscreen devices
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="*touchscreen*", MODE="0660", GROUP="input"
+SUBSYSTEM=="input", KERNEL=="event*", ATTRS{name}=="*Touch*", MODE="0660", GROUP="input"

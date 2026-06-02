@@ -1,49 +1,20 @@
-# KlipperScreen
+# rKlipperScreen
 
-KlipperScreen is a touchscreen GUI that interfaces with [Klipper](https://github.com/Klipper3d/klipper) via [Moonraker](https://github.com/arksine/moonraker). It can switch between multiple printers to access them from a single location, and it doesn't even need to run on the same host, you can install it on another device and configure the IP address to access the printer.
+rKlipperScreen is a lightweight, ultra-high-performance touchscreen GUI that interfaces with [Klipper](https://github.com/Klipper3d/klipper) via [Moonraker](https://github.com/arksine/moonraker). It is a complete rewrite of the original KlipperScreen in Rust using the Slint UI framework.
+
+rKlipperScreen allows you to switch between multiple printers and access them from a single location. Notably, it doesn't need to run on the same host as your printer; you can install it on another device and configure the IP address to connect to the printer.
+
+## Key Features
+
+- **Resource Efficient**: Significantly lower CPU and RAM usage than the legacy Python/GTK3 implementation.
+- **Modern Architecture**: Compiled binary with no Python or virtualenv dependencies.
+- **Drop-in Configuration**: Fully compatible with existing `KlipperScreen.conf` files.
 
 ### Required Hardware
 
-KlipperScreen should run on any touchscreen that you can connect to a host (Raspberry, PC, Tablet), but not screens that connect directly to the printer MCU board.
+rKlipperScreen should run on any touchscreen that you can connect to a host (Raspberry Pi, PC, Tablet), but not screens that connect directly to the printer MCU board.
 
-A physical touchscreen is not strictly required, for example you may install a remote desktop server like tigervnc-scraping-server and connect from a client device, [check out the hardware page for further information.](Hardware.md)
-
-### Sample Panels
-
-Main Menu
-
-![Main Menu](img/panels/main_panel.png)
-
-Job Status
-
-![Job Status](img/panels/job_status.png)
-
-[More](Panels.md)
+A physical touchscreen is not strictly required; you may run a remote desktop/X11 or VNC server to display the UI on client devices. Refer to [Hardware](Hardware.md) for more details.
 
 ### Inspiration
-KlipperScreen was inspired by [OctoScreen](https://github.com/Z-Bolt/OctoScreen/) and the need for a touchscreen GUI that
-will natively work with [Klipper](https://github.com/klipper3d/klipper) and [Moonraker](https://github.com/arksine/moonraker).
-
-### About the project
-
-KlipperScreen has been created and maintained by Jordan Ruthe from 2020 to 2021
-
-Donate to Jordan: [Patreon](https://www.patreon.com/klipperscreen) [Ko-fi](https://ko-fi.com/klipperscreen)
-
-
-The current maintainer is Alfredo Monclus (alfrix) from 2021 onwards
-
-Donate to Alfredo: [Ko-fi](https://ko-fi.com/alfrix)
-
-thanks to all the [contributors](https://github.com/KlipperScreen/KlipperScreen/graphs/contributors) who helped along the way.
-
-
-### Sponsors
-
-| | Thank you for sponsoring KlipperScreen and the open source community. |
-| - | - |
-| ![LDO](img/sponsors/LDO.png) | [LDO](https://ldomotors.com/) |
-|  ![YUMI](img/sponsors/YUMI.png) | [YUMI](https://wiki.yumi-lab.com/) |
-
-
-
+rKlipperScreen is inspired by the original Python-based [KlipperScreen](https://github.com/KlipperScreen/KlipperScreen) and [OctoScreen](https://github.com/Z-Bolt/OctoScreen/).
