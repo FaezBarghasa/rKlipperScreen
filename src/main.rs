@@ -7,18 +7,56 @@ mod system;
 
 use clap::Parser;
 use config::{KConfig, MenuAction, MenuRouter};
-use printer::state::{PrinterState, reduce_printer_state};
+use printer::state::PrinterState;
 use api::websocket::{spawn_moonraker_client, MoonrakerCommand};
 use api::rest::extract_thumbnail_from_gcode;
 use system::l10n::{init_global_translator, get_translation};
 use system::power::PowerController;
 
-use slint::{ComponentHandle, Model, ModelRc, SharedString, VecModel};
+use slint::{ComponentHandle, Model, ModelRc, VecModel};
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
 use tracing::{info, warn, error};
+
+#[derive(Debug, PartialEq)]
+pub enum DisplayStack {
+    Wayland,
+    X11,
+    DirectKms,
+}
+
+pub fn detect_display_stack(env_wayland: Option<&str>, env_x11: Option<&str>) -> DisplayStack {
+    if env_wayland.is_some() {
+        DisplayStack::Wayland
+    } else if env_x11.is_some() {
+        DisplayStack::X11
+    } else {
+        DisplayStack::DirectKms
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_detect_display_stack_wayland() {
+        assert_eq!(detect_display_stack(Some("wayland-0"), None), DisplayStack::Wayland);
+        assert_eq!(detect_display_stack(Some("wayland-0"), Some(":0")), DisplayStack::Wayland);
+    }
+
+    #[test]
+    fn test_detect_display_stack_x11() {
+        assert_eq!(detect_display_stack(None, Some(":0")), DisplayStack::X11);
+    }
+
+    #[test]
+    fn test_detect_display_stack_kms() {
+        assert_eq!(detect_display_stack(None, None), DisplayStack::DirectKms);
+    }
+}
 
 #[derive(Parser, Debug)]
 #[command(name = "rklipperscreen", version = "0.1.0", about = "rKlipperScreen Slint Port")]
@@ -101,17 +139,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // 5. Initialize Translator
     init_global_translator(&config.language);
 
-    enum DisplayStack { Wayland, X11, DirectKms }
-    let wayland = std::env::var("WAYLAND_DISPLAY").is_ok();
-    let x11 = std::env::var("DISPLAY").is_ok();
+    let wayland = std::env::var("WAYLAND_DISPLAY").ok();
+    let x11 = std::env::var("DISPLAY").ok();
 
-    let display_stack = if wayland {
-        DisplayStack::Wayland
-    } else if x11 {
-        DisplayStack::X11
-    } else {
-        DisplayStack::DirectKms
-    };
+    let display_stack = detect_display_stack(wayland.as_deref(), x11.as_deref());
 
     if let DisplayStack::DirectKms = display_stack {
         info!("No X11 or Wayland session detected. Initializing Direct KMS backend.");
@@ -119,7 +150,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             i_slint_backend_linuxkms::BackendBuilder::default().build().map_err(|e| e.to_string())?
         )).map_err(|e| e.to_string())?;
     } else {
-        info!("Desktop environment detected (Wayland: {}, X11: {}), using default winit backend.", wayland, x11);
+        info!("Desktop environment detected (Wayland: {}, X11: {}), using default winit backend.", wayland.is_some(), x11.is_some());
     }
 
     // 6. Build Slint MainApp

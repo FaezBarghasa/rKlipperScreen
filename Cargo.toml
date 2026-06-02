@@ -20,7 +20,7 @@ base64 = "0.22"
 image = { version = "0.25", default-features = false, features = ["png"] }
 gettext = "0.4"
 futures-util = "0.3.32"
-reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "rustls"] }
 zbus = { version = "5.16.0", default-features = false, features = ["tokio"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

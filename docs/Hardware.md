@@ -9,6 +9,7 @@ The following screens are known to work with KlipperScreen:
 * [BTT PI TFT50](https://www.biqu.equipment/collections/lcd/products/bigtreetech-pi-tft50-v1-0-tft-display-for-raspberry-pi-3d-printer-part)
 * [BTT HDMI5/7](https://biqu.equipment/products/bigtreetech-hdmi5-v1-0-hdmi7-v1-0)
 * [Raspberry PI 7" Touchscreen](https://www.raspberrypi.org/products/raspberry-pi-touch-display/)
+* [MKS SKIPR & MKS PI-TS35 (ILI9486 3.5" TFT / GT911 Touch)](https://github.com/makerbase-mks/MKS-SKIPR) (Native Support via KMS & Evdev)
 * [Hyperpixel 4](https://shop.pimoroni.com/products/hyperpixel-4)
 * [3.5" RPi Display](http://www.lcdwiki.com/3.5inch_RPi_Display)
 * [5" HDMI Display-B](http://lcdwiki.com/5inch_HDMI_Display-B)

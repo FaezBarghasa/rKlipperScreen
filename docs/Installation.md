@@ -12,13 +12,20 @@
 
 To install rKlipperScreen, you will compile the native binary from source:
 
-1. **Install Rust & Cargo**:
+1. **Install System Dependencies**:
+   Before compiling, ensure you have the required native development headers for hardware input and rendering:
+   ```sh
+   sudo apt-get update
+   sudo apt-get install -y libudev-dev libinput-dev
+   ```
+
+2. **Install Rust & Cargo**:
    ```sh
    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
    source $HOME/.cargo/env
    ```
 
-2. **Clone the Repository**:
+3. **Clone the Repository**:
    ```sh
    cd ~/
    git clone https://github.com/FaezBarghasa/rKlipperScreen.git

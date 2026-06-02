@@ -9,6 +9,8 @@ It is a modern port and drop-in replacement for the original KlipperScreen, rewr
 *   **Ultra-Lightweight & Fast**: Experience minimal memory usage and extremely fast startup times by eliminating the overhead of a Python virtual environment and GTK3/GObject runtime.
 *   **Modern & Responsive UI**: Enjoy a fluid, GPU-accelerated interface powered by the Slint UI framework.
 *   **Seamless KlipperScreen Compatibility**: Directly reads and parses existing `KlipperScreen.conf` files, custom menu structures, and preheat profiles.
+*   **Multi-Backend Rendering**: Automatically detects the graphical stack to run on **Wayland (via Cage/Sway)**, **X11**, or **Bare-Metal Direct KMS (DRM)** framebuffers seamlessly.
+*   **Native Async Touch**: Intercepts and dynamically translates raw touchscreen data via native asynchronous `evdev` integration, skipping overhead from display managers.
 *   **Robust Moonraker Integration**: Handles all Moonraker API communication efficiently.
 *   **Cross-Platform Potential**: Built with Rust and Slint, offering potential for broader platform support.
 
