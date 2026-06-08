@@ -1,4 +1,4 @@
-use crate::printer::state::{PrinterState, reduce_printer_state};
+use crate::printer::state::{reduce_printer_state, PrinterState};
 use futures_util::{SinkExt, StreamExt};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -8,7 +8,7 @@ use tokio::sync::mpsc;
 use tokio::time::sleep;
 use tokio_tungstenite::connect_async;
 use tokio_tungstenite::tungstenite::Message;
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 pub enum MoonrakerCommand {
     SendGcode(String),
@@ -42,7 +42,11 @@ pub fn spawn_moonraker_client(
         let mut attempt = 0;
 
         loop {
-            info!("Connecting to Moonraker at {} (attempt {})...", ws_url, attempt + 1);
+            info!(
+                "Connecting to Moonraker at {} (attempt {})...",
+                ws_url,
+                attempt + 1
+            );
             let ws_stream = match connect_async(&ws_url).await {
                 Ok((stream, _)) => {
                     attempt = 0; // Reset backoff on successful connection
@@ -55,7 +59,7 @@ pub fn spawn_moonraker_client(
                         state.printer_state = "disconnected".to_string();
                     }
                     let _ = ui_update_trigger.send(()).await;
-                    
+
                     let delay_secs = backoff_delays[attempt.min(backoff_delays.len() - 1)];
                     warn!("Reconnecting in {} seconds...", delay_secs);
                     sleep(Duration::from_secs(delay_secs)).await;

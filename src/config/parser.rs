@@ -32,7 +32,8 @@ impl KConfig {
         let mut combined_ini = Ini::new();
 
         // 1. Hardcoded internal fallbacks
-        combined_ini.with_section(Some("main"))
+        combined_ini
+            .with_section(Some("main"))
             .set("language", "en")
             .set("theme", "z-bolt")
             .set("use_dpms", "true");
@@ -63,7 +64,10 @@ impl KConfig {
                     Self::merge_ini(&mut combined_ini, &user_ini);
                 }
             } else {
-                warn!("Config file {:?} does not exist. Skipping user overrides.", path);
+                warn!(
+                    "Config file {:?} does not exist. Skipping user overrides.",
+                    path
+                );
             }
         }
 
@@ -85,8 +89,12 @@ impl KConfig {
             if let Some(sec_name) = sec {
                 if sec_name.starts_with("printer ") {
                     let printer_name = sec_name["printer ".len()..].to_string();
-                    let host = prop.get("moonraker_host").unwrap_or("127.0.0.1").to_string();
-                    let port = prop.get("moonraker_port")
+                    let host = prop
+                        .get("moonraker_host")
+                        .unwrap_or("127.0.0.1")
+                        .to_string();
+                    let port = prop
+                        .get("moonraker_port")
                         .and_then(|p| p.parse::<u16>().ok())
                         .unwrap_or(7125);
                     let api_key = prop.get("moonraker_api_key").unwrap_or("").to_string();
@@ -102,10 +110,12 @@ impl KConfig {
                     );
                 } else if sec_name.starts_with("preheat ") {
                     let preset_name = sec_name["preheat ".len()..].to_string();
-                    let bed = prop.get("bed")
+                    let bed = prop
+                        .get("bed")
                         .and_then(|v| v.parse::<f32>().ok())
                         .unwrap_or(0.0);
-                    let extruder = prop.get("extruder")
+                    let extruder = prop
+                        .get("extruder")
                         .and_then(|v| v.parse::<f32>().ok())
                         .unwrap_or(0.0);
 
@@ -145,7 +155,7 @@ impl KConfig {
 
     fn merge_ini(dest: &mut Ini, src: &Ini) {
         for (sec, prop) in src {
-            let section_key = sec.as_deref();
+            let section_key = sec;
             for (key, val) in prop {
                 dest.set_to(section_key, key.to_string(), val.to_string());
             }
@@ -186,7 +196,7 @@ impl KConfig {
 
     fn find_user_config_path() -> Option<PathBuf> {
         let home = std::env::var("HOME").unwrap_or_else(|_| "/home/pi".to_string());
-        
+
         let paths = vec![
             format!("{}/printer_data/config/KlipperScreen.conf", home),
             format!("{}/.config/KlipperScreen/KlipperScreen.conf", home),
@@ -213,14 +223,20 @@ mod tests {
     fn test_merge_ini() {
         let mut dest = Ini::new();
         dest.set_to(Some("main"), "language".to_string(), "fr".to_string());
-        
+
         let mut src = Ini::new();
         src.set_to(Some("main"), "theme".to_string(), "material".to_string());
-        
+
         KConfig::merge_ini(&mut dest, &src);
-        
-        assert_eq!(dest.section(Some("main")).unwrap().get("language").unwrap(), "fr");
-        assert_eq!(dest.section(Some("main")).unwrap().get("theme").unwrap(), "material");
+
+        assert_eq!(
+            dest.section(Some("main")).unwrap().get("language").unwrap(),
+            "fr"
+        );
+        assert_eq!(
+            dest.section(Some("main")).unwrap().get("theme").unwrap(),
+            "material"
+        );
     }
 
     #[test]
@@ -231,4 +247,3 @@ mod tests {
         assert!(!config.printers.is_empty());
     }
 }
-

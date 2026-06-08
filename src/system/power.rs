@@ -1,7 +1,7 @@
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 pub struct PowerController {
     backlight_path: Option<String>,
@@ -24,7 +24,9 @@ impl PowerController {
             }
         }
 
-        Self { backlight_path: found_path }
+        Self {
+            backlight_path: found_path,
+        }
     }
 
     pub fn set_screen_power(&self, turn_on: bool) {
@@ -40,7 +42,7 @@ impl PowerController {
             info!("Using X11 DPMS fallback to turn screen {}", state);
             let mut cmd = Command::new("xset");
             cmd.arg("dpms").arg("force").arg(state);
-            
+
             // Slint often runs inside an X11/Wayland context; set DISPLAY variable to default if not set
             if std::env::var("DISPLAY").is_err() {
                 cmd.env("DISPLAY", ":0");

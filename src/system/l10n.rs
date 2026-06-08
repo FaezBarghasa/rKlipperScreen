@@ -24,7 +24,10 @@ impl Translator {
             lang.to_string()
         };
 
-        let mo_path = format!("ks_includes/locales/{}/LC_MESSAGES/KlipperScreen.mo", lang_code);
+        let mo_path = format!(
+            "ks_includes/locales/{}/LC_MESSAGES/KlipperScreen.mo",
+            lang_code
+        );
         let catalog = if Path::new(&mo_path).exists() {
             if let Ok(file) = File::open(&mo_path) {
                 Catalog::parse(file).ok()

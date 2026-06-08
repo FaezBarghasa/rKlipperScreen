@@ -1,16 +1,16 @@
 slint::include_modules!();
 
+mod api;
 mod config;
 mod printer;
-mod api;
 mod system;
 
+use api::rest::extract_thumbnail_from_gcode;
+use api::websocket::{spawn_moonraker_client, MoonrakerCommand};
 use clap::Parser;
 use config::{KConfig, MenuAction, MenuRouter};
 use printer::state::PrinterState;
-use api::websocket::{spawn_moonraker_client, MoonrakerCommand};
-use api::rest::extract_thumbnail_from_gcode;
-use system::l10n::{init_global_translator, get_translation};
+use system::l10n::{get_translation, init_global_translator};
 use system::power::PowerController;
 
 use slint::{ComponentHandle, Model, ModelRc, VecModel};
@@ -18,7 +18,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
 use tokio::sync::mpsc;
-use tracing::{info, warn, error};
+use tracing::{error, info, warn};
 
 #[derive(Debug, PartialEq)]
 pub enum DisplayStack {
@@ -43,8 +43,14 @@ mod tests {
 
     #[test]
     fn test_detect_display_stack_wayland() {
-        assert_eq!(detect_display_stack(Some("wayland-0"), None), DisplayStack::Wayland);
-        assert_eq!(detect_display_stack(Some("wayland-0"), Some(":0")), DisplayStack::Wayland);
+        assert_eq!(
+            detect_display_stack(Some("wayland-0"), None),
+            DisplayStack::Wayland
+        );
+        assert_eq!(
+            detect_display_stack(Some("wayland-0"), Some(":0")),
+            DisplayStack::Wayland
+        );
     }
 
     #[test]
@@ -59,9 +65,17 @@ mod tests {
 }
 
 #[derive(Parser, Debug)]
-#[command(name = "rklipperscreen", version = "0.1.0", about = "rKlipperScreen Slint Port")]
+#[command(
+    name = "rklipperscreen",
+    version = "0.1.0",
+    about = "rKlipperScreen Slint Port"
+)]
 struct CliArgs {
-    #[arg(short, long, default_value = "/home/pi/printer_data/config/KlipperScreen.conf")]
+    #[arg(
+        short,
+        long,
+        default_value = "/home/pi/printer_data/config/KlipperScreen.conf"
+    )]
     config: String,
 
     #[arg(short, long, default_value = "/tmp/KlipperScreen.log")]
@@ -79,12 +93,11 @@ struct CliArgs {
 
 fn init_logging(logfile_path: &str) {
     use tracing_subscriber::prelude::*;
-    
+
     let filter = tracing_subscriber::EnvFilter::try_from_default_env()
         .unwrap_or_else(|_| tracing_subscriber::EnvFilter::new("info"));
-        
-    let stdout_layer = tracing_subscriber::fmt::layer()
-        .with_writer(std::io::stdout);
+
+    let stdout_layer = tracing_subscriber::fmt::layer().with_writer(std::io::stdout);
 
     // Expand tilde or home variable if present in path
     let resolved_path = if logfile_path.starts_with("~/") {
@@ -96,12 +109,11 @@ fn init_logging(logfile_path: &str) {
 
     if let Ok(file) = std::fs::OpenOptions::new()
         .create(true)
-        .write(true)
+
         .append(true)
         .open(&resolved_path)
     {
-        let file_layer = tracing_subscriber::fmt::layer()
-            .with_writer(Mutex::new(file));
+        let file_layer = tracing_subscriber::fmt::layer().with_writer(Mutex::new(file));
         let _ = tracing_subscriber::registry()
             .with(filter)
             .with(stdout_layer)
@@ -113,7 +125,10 @@ fn init_logging(logfile_path: &str) {
             .with(filter)
             .with(stdout_layer)
             .try_init();
-        warn!("Could not open logfile at {}, logging to stdout only", resolved_path);
+        warn!(
+            "Could not open logfile at {}, logging to stdout only",
+            resolved_path
+        );
     }
 }
 
@@ -147,14 +162,21 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     if let DisplayStack::DirectKms = display_stack {
         info!("No X11 or Wayland session detected. Initializing Direct KMS backend.");
         slint::platform::set_platform(Box::new(
-            i_slint_backend_linuxkms::BackendBuilder::default().build().map_err(|e| e.to_string())?
-        )).map_err(|e| e.to_string())?;
+            i_slint_backend_linuxkms::BackendBuilder::default()
+                .build()
+                .map_err(|e| e.to_string())?,
+        ))
+        .map_err(|e| e.to_string())?;
     } else {
-        info!("Desktop environment detected (Wayland: {}, X11: {}), using default winit backend.", wayland.is_some(), x11.is_some());
+        info!(
+            "Desktop environment detected (Wayland: {}, X11: {}), using default winit backend.",
+            wayland.is_some(),
+            x11.is_some()
+        );
     }
 
     // 6. Build Slint MainApp
-    let app = MainApp::new()?;
+    let app = App::new()?;
 
     if let DisplayStack::DirectKms = display_stack {
         let app_weak = app.as_weak();
@@ -207,9 +229,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let menu_router = Arc::new(Mutex::new(MenuRouter::new(&config)));
 
     // Bind L10n translation global callback
-    app.global::<L10n>().on_translate(move |text| {
-        get_translation(text.as_str()).into()
-    });
+    app.global::<L10n>()
+        .on_translate(move |text| get_translation(text.as_str()).into());
 
     // Populate Initial Menu Items model in Slint
     let sync_menu_items = {
@@ -280,14 +301,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         app.set_menu_title(panel.as_str().into());
                     }
                     MenuAction::ExecuteGcode(gcode) => {
-                        let _ = cmd_tx_for_clicks.try_send(MoonrakerCommand::SendGcode(gcode.clone()));
+                        let _ =
+                            cmd_tx_for_clicks.try_send(MoonrakerCommand::SendGcode(gcode.clone()));
                     }
                     MenuAction::SystemCommand(cmd) => {
                         info!("Executing system command: {}", cmd);
-                        let _ = std::process::Command::new("sh")
-                            .arg("-c")
-                            .arg(cmd)
-                            .status();
+                        let _ = std::process::Command::new("sh").arg("-c").arg(cmd).status();
                     }
                 }
             }
@@ -400,14 +419,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cmd_tx_for_files = cmd_tx.clone();
 
     // Populate file list helper
-    let sync_gcode_files = move |app: &MainApp, current_path: &Path| {
+    let sync_gcode_files = move |app: &App, current_path: &Path| {
         let mut list_items = Vec::new();
         if let Ok(entries) = fs::read_dir(current_path) {
             for entry in entries.filter_map(Result::ok) {
                 let name = entry.file_name().to_string_lossy().to_string();
                 let is_dir = entry.file_type().map(|t| t.is_dir()).unwrap_or(false);
                 let size = entry.metadata().map(|m| m.len()).unwrap_or(0);
-                
+
                 let size_str = if size > 1024 * 1024 {
                     format!("{:.1} MB", size as f32 / (1024.0 * 1024.0))
                 } else {
@@ -428,7 +447,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 });
             }
         }
-        
+
         app.set_gcode_files(ModelRc::new(VecModel::from(list_items)));
     };
 
@@ -479,7 +498,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     if let Some(app) = app_weak.upgrade() {
                         app.set_printer_state(state.printer_state.into());
                         app.set_extruder_temp(state.extruder_temp);
+                        app.set_extruder_temp_actual(state.extruder_temp as i32);
                         app.set_extruder_target(state.extruder_target);
+                        app.set_extruder_temp_target(state.extruder_target as i32);
                         app.set_bed_temp(state.bed_temp);
                         app.set_bed_target(state.bed_target);
                         app.set_fan_speed(state.fan_speed);

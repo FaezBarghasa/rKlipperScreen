@@ -39,7 +39,17 @@ impl MenuRouter {
     fn parse_menus(&mut self, config: &KConfig) {
         // Collect all menu definitions from configuration
         // Sections look like: [menu __main move], [menu __main more bedlevel]
-        let mut items_by_parent: HashMap<String, Vec<(String, String, String, Option<String>, Option<String>, Option<String>)>> = HashMap::new();
+        let mut items_by_parent: HashMap<
+            String,
+            Vec<(
+                String,
+                String,
+                String,
+                Option<String>,
+                Option<String>,
+                Option<String>,
+            )>,
+        > = HashMap::new();
 
         for (sec, prop) in &config.raw_ini {
             if let Some(sec_name) = sec {
@@ -132,7 +142,10 @@ impl MenuRouter {
     }
 
     pub fn get_active_menu_path(&self) -> &str {
-        self.navigation_stack.last().map(|s| s.as_str()).unwrap_or("__main")
+        self.navigation_stack
+            .last()
+            .map(|s| s.as_str())
+            .unwrap_or("__main")
     }
 
     pub fn get_active_menu_items(&self, printer_state: &Value) -> Vec<MenuItem> {
