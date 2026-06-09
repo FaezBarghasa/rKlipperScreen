@@ -48,7 +48,7 @@ component IconButton inherits Rectangle {
     }
 }
 
-export component MainApp inherits Window {
+export component App inherits Window {
     title: "rKlipperScreen";
     background: Theme.bg;
     width: 800px;
@@ -56,7 +56,9 @@ export component MainApp inherits Window {
 
     // Configuration and states updated by Rust
     in-out property <string> printer-state: "disconnected";
+    in-out property <int> extruder_temp_actual: 0;
     in-out property <float> extruder-temp: 0.0;
+    in-out property <int> extruder_temp_target: 0;
     in-out property <float> extruder-target: 0.0;
     in-out property <float> bed-temp: 0.0;
     in-out property <float> bed-target: 0.0;

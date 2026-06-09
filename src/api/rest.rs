@@ -5,7 +5,7 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use std::path::Path;
 use std::time::Duration;
-use tracing::{info, error};
+use tracing::info;
 
 pub struct RestClient {
     client: reqwest::Client,
@@ -71,14 +71,22 @@ pub fn extract_thumbnail_from_gcode<P: AsRef<Path>>(file_path: P) -> Option<Imag
         let trimmed = line.trim();
 
         if !in_thumbnail {
-            if trimmed.starts_with("; thumbnail begin") || (trimmed.starts_with("; thumbnail_") && trimmed.contains("begin")) {
+            if trimmed.starts_with("; thumbnail begin")
+                || (trimmed.starts_with("; thumbnail_") && trimmed.contains("begin"))
+            {
                 in_thumbnail = true;
                 base64_accumulator.clear();
             }
         } else {
-            if trimmed.starts_with("; thumbnail end") || (trimmed.starts_with("; thumbnail_") && trimmed.contains("end")) {
-                if let Ok(png_bytes) = base64::prelude::BASE64_STANDARD.decode(base64_accumulator.trim()) {
-                    if let Ok(img) = image::load_from_memory_with_format(&png_bytes, ImageFormat::Png) {
+            if trimmed.starts_with("; thumbnail end")
+                || (trimmed.starts_with("; thumbnail_") && trimmed.contains("end"))
+            {
+                if let Ok(png_bytes) =
+                    base64::prelude::BASE64_STANDARD.decode(base64_accumulator.trim())
+                {
+                    if let Ok(img) =
+                        image::load_from_memory_with_format(&png_bytes, ImageFormat::Png)
+                    {
                         let rgba = img.to_rgba8();
                         let buffer = SharedPixelBuffer::<Rgba8Pixel>::clone_from_slice(
                             rgba.as_raw(),

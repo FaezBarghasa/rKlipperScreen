@@ -1,21 +1,27 @@
-use evdev::{Device, InputEventKind, AbsoluteAxisType, Key};
-use slint::platform::{WindowEvent, PointerEventButton};
-use slint::LogicalPosition;
+use evdev::{AbsoluteAxisType, Device, InputEventKind, Key};
+use slint::platform::WindowEvent;
 use slint::ComponentHandle;
+use slint::LogicalPosition;
 use std::time::Duration;
 use tokio::time::sleep;
 use tracing::{error, info, warn};
 
-pub async fn start_touch_router(app_weak: slint::Weak<crate::MainApp>) {
+pub async fn start_touch_router(app_weak: slint::Weak<crate::App>) {
     info!("Starting evdev touch input router for KMS mode");
-    
+
     let mut device_opt = None;
     for _ in 0..10 {
-        match Device::open("/dev/input/event0") {
-            Ok(device) => {
-                device_opt = Some(device);
-                break;
-            }
+        match tokio::fs::File::open("/dev/input/event0").await {
+            Ok(_file) => match Device::open("/dev/input/event0") {
+                Ok(device) => {
+                    device_opt = Some(device);
+                    break;
+                }
+                Err(e) => {
+                    warn!("Failed to open /dev/input/event0, retrying: {}", e);
+                    sleep(Duration::from_millis(500)).await;
+                }
+            },
             Err(e) => {
                 warn!("Failed to open /dev/input/event0, retrying: {}", e);
                 sleep(Duration::from_millis(500)).await;
@@ -58,14 +64,14 @@ pub async fn start_touch_router(app_weak: slint::Weak<crate::MainApp>) {
                         _ => {}
                     }
 
-                    
                     // Dispatch move event
                     let _ = slint::invoke_from_event_loop({
                         let app_weak = app_weak.clone();
                         let pos = LogicalPosition::new(current_x, current_y);
                         move || {
                             if let Some(app) = app_weak.upgrade() {
-                                app.window().dispatch_event(WindowEvent::PointerMoved { position: pos });
+                                app.window()
+                                    .dispatch_event(WindowEvent::PointerMoved { position: pos });
                             }
                         }
                     });
@@ -81,12 +87,12 @@ pub async fn start_touch_router(app_weak: slint::Weak<crate::MainApp>) {
                                     if is_pressed {
                                         app.window().dispatch_event(WindowEvent::PointerPressed {
                                             position: pos,
-                                            button: PointerEventButton::Left,
+                                            button: slint::platform::PointerEventButton::Left,
                                         });
                                     } else {
                                         app.window().dispatch_event(WindowEvent::PointerReleased {
                                             position: pos,
-                                            button: PointerEventButton::Left,
+                                            button: slint::platform::PointerEventButton::Left,
                                         });
                                     }
                                 }
