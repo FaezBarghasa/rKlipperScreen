@@ -31,7 +31,7 @@ export component SystemPanel inherits BasePanel {
                 
                 VerticalLayout {
                     spacing: 10px;
-                    Text { text: "System Load"; color: Theme.accent; font-size: 16px; font-weight: bold; }
+                    Text { text: "System Load"; color: Theme.accent; font-size: 16px; font-weight: 700; }
                     
                     // Overall CPU
                     VerticalLayout {
@@ -98,27 +98,27 @@ export component SystemPanel inherits BasePanel {
                     spacing: 12px;
                     
                     Row {
-                        Text { text: "Host Date/Time:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Host Date/Time:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.date-time; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Display Backend:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Display Backend:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.backend; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Hostname:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Hostname:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.hostname; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "OS Version:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "OS Version:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.os-version; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Kernel Version:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Kernel Version:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.kernel-version; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Python Version:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Python Version:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.python-version; color: Theme.text; }
                     }
                 }

@@ -7,15 +7,15 @@ export component FineTunePanel inherits BasePanel {
 
     in-out property <float> z-offset: 0.0;
     in-out property <float> z-delta: 0.05;
-    in-out property <[string]> z-deltas: ["0.01", "0.05"];
+    in-out property <[float]> z-deltas: [0.01, 0.05];
 
     in-out property <int> speed-factor: 100;
     in-out property <int> speed-delta: 25;
-    in-out property <[string]> speed-deltas: ["5", "25"];
+    in-out property <[int]> speed-deltas: [5, 25];
 
     in-out property <int> extrude-factor: 100;
     in-out property <int> extrude-delta: 2;
-    in-out property <[string]> extrude-deltas: ["1", "2"];
+    in-out property <[int]> extrude-deltas: [1, 2];
 
     callback change-z(string, float); // "+", "-", "reset", value
     callback change-speed(string, int);
@@ -57,10 +57,10 @@ export component FineTunePanel inherits BasePanel {
             HorizontalLayout {
                 spacing: 5px;
                 for d in root.z-deltas : Rectangle {
-                    background: root.z-delta == d.to-float() ? Theme.active : Theme.button-bg;
+                    background: root.z-delta == d ? Theme.active : Theme.button-bg;
                     border-radius: 4px;
                     height: 35px;
-                    TouchArea { clicked => { root.z-delta = d.to-float(); } }
+                    TouchArea { clicked => { root.z-delta = d; } }
                     Text { text: d; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                 }
             }
@@ -98,10 +98,10 @@ export component FineTunePanel inherits BasePanel {
             HorizontalLayout {
                 spacing: 5px;
                 for d in root.speed-deltas : Rectangle {
-                    background: root.speed-delta == d.to-int() ? Theme.active : Theme.button-bg;
+                    background: root.speed-delta == d ? Theme.active : Theme.button-bg;
                     border-radius: 4px;
                     height: 35px;
-                    TouchArea { clicked => { root.speed-delta = d.to-int(); } }
+                    TouchArea { clicked => { root.speed-delta = d; } }
                     Text { text: d + "%"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                 }
             }
@@ -139,10 +139,10 @@ export component FineTunePanel inherits BasePanel {
             HorizontalLayout {
                 spacing: 5px;
                 for d in root.extrude-deltas : Rectangle {
-                    background: root.extrude-delta == d.to-int() ? Theme.active : Theme.button-bg;
+                    background: root.extrude-delta == d ? Theme.active : Theme.button-bg;
                     border-radius: 4px;
                     height: 35px;
-                    TouchArea { clicked => { root.extrude-delta = d.to-int(); } }
+                    TouchArea { clicked => { root.extrude-delta = d; } }
                     Text { text: d + "%"; color: Theme.text; horizontal-alignment: center; vertical-alignment: center; }
                 }
             }

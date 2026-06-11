@@ -37,30 +37,33 @@ export component PowerPanel inherits BasePanel {
                         text: dev.name;
                         font-size: 18px;
                         color: Theme.text;
-                        font-weight: bold;
+                        font-weight: 700;
                         vertical-alignment: center;
                     }
 
                     // Switch simulator
-                    Rectangle {
-                        width: 60px;
-                        height: 30px;
-                        background: dev.status == "on" ? Theme.active : Theme.button-bg;
-                        border-radius: 15px;
-                        vertical-alignment: center;
-                        
-                        TouchArea {
-                            clicked => {
-                                root.toggle-device(dev.name, dev.status != "on");
-                            }
-                        }
-                        
+                    VerticalLayout {
+                        alignment: center;
                         Rectangle {
-                            x: dev.status == "on" ? 32px : 2px;
-                            width: 26px;
-                            height: 26px;
-                            background: Theme.text;
-                            border-radius: 13px;
+                            width: 60px;
+                            height: 30px;
+                            background: dev.status == "on" ? Theme.active : Theme.button-bg;
+                            border-radius: 15px;
+                            
+                            TouchArea {
+                                clicked => {
+                                    root.toggle-device(dev.name, dev.status != "on");
+                                }
+                            }
+                            
+                            Rectangle {
+                                x: dev.status == "on" ? 32px : 2px;
+                                y: 2px;
+                                width: 26px;
+                                height: 26px;
+                                background: Theme.text;
+                                border-radius: 13px;
+                            }
                         }
                     }
                 }

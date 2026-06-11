@@ -7,7 +7,6 @@ export component ShutdownPanel inherits BasePanel {
     in-out property <bool> show-estop: true;
     in-out property <bool> show-power-shortcut: true;
 
-    callback estop-clicked();
     callback power-clicked();
     callback restart-ks-clicked();
     callback lock-clicked();
@@ -23,14 +22,14 @@ export component ShutdownPanel inherits BasePanel {
                 background: Theme.error;
                 border-radius: 5px;
                 TouchArea { clicked => { root.estop-clicked(); } }
-                Text { text: "Emergency Stop"; color: Theme.text; font-size: 20px; font-weight: bold; horizontal-alignment: center; vertical-alignment: center; }
+                Text { text: "Emergency Stop"; color: Theme.text; font-size: 20px; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
             }
             
             if root.show-power-shortcut : Rectangle {
                 background: Theme.warning;
                 border-radius: 5px;
                 TouchArea { clicked => { root.power-clicked(); } }
-                Text { text: "Power Devices"; color: Theme.bg; font-size: 20px; font-weight: bold; horizontal-alignment: center; vertical-alignment: center; }
+                Text { text: "Power Devices"; color: Theme.bg; font-size: 20px; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
             }
         }
         

@@ -29,7 +29,7 @@ export component PressureAdvancePanel inherits BasePanel {
                 padding-right: 15px;
                 alignment: space-between;
                 Text { text: "Active Extruder:"; color: Theme.text; vertical-alignment: center; }
-                Text { text: root.current-extruder; color: Theme.accent; font-weight: bold; vertical-alignment: center; }
+                Text { text: root.current-extruder; color: Theme.accent; font-weight: 700; vertical-alignment: center; }
             }
         }
 
@@ -51,7 +51,7 @@ export component PressureAdvancePanel inherits BasePanel {
                         text: "Pressure Advance (mm)";
                         font-size: 16px;
                         color: Theme.text;
-                        font-weight: bold;
+                        font-weight: 700;
                     }
                     Text {
                         text: root.pressure-advance;
@@ -98,7 +98,7 @@ export component PressureAdvancePanel inherits BasePanel {
                         text: "Smooth Time (s)";
                         font-size: 16px;
                         color: Theme.text;
-                        font-weight: bold;
+                        font-weight: 700;
                     }
                     Text {
                         text: root.smooth-time;

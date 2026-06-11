@@ -33,7 +33,7 @@ export component SpoolEditorPanel inherits BasePanel {
             width: 280px;
             spacing: 12px;
             
-            Text { text: "Adjust Weights"; color: Theme.accent; font-weight: bold; }
+            Text { text: "Adjust Weights"; color: Theme.accent; font-weight: 700; }
             
             Button {
                 text: "Measured Weight: " + root.measured-weight + " g";
@@ -67,8 +67,8 @@ export component SpoolEditorPanel inherits BasePanel {
                     padding-left: 15px;
                     padding-right: 15px;
                     alignment: space-between;
-                    Text { text: root.spool-name; font-size: 18px; color: Theme.text; font-weight: bold; vertical-alignment: center; }
-                    Text { text: root.material; color: Theme.accent; vertical-alignment: center; font-weight: bold; }
+                    Text { text: root.spool-name; font-size: 18px; color: Theme.text; font-weight: 700; vertical-alignment: center; }
+                    Text { text: root.material; color: Theme.accent; vertical-alignment: center; font-weight: 700; }
                 }
             }
 
@@ -97,19 +97,19 @@ export component SpoolEditorPanel inherits BasePanel {
                 GridLayout {
                     spacing: 10px;
                     Row {
-                        Text { text: "Vendor:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Vendor:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.vendor; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Location:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Location:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.location; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Price:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Price:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.price; color: Theme.text; }
                     }
                     Row {
-                        Text { text: "Comment:"; color: Theme.active; font-weight: bold; }
+                        Text { text: "Comment:"; color: Theme.active; font-weight: 700; }
                         Text { text: root.comment; color: Theme.text; wrap: word-wrap; }
                     }
                 }
@@ -123,7 +123,7 @@ export component SpoolEditorPanel inherits BasePanel {
             
             VerticalLayout {
                 spacing: 10px;
-                Text { text: "Enter Weight for: " + root.active-field; color: Theme.accent; font-size: 16px; font-weight: bold; }
+                Text { text: "Enter Weight for: " + root.active-field; color: Theme.accent; font-size: 16px; font-weight: 700; }
                 
                 Keypad {
                     key-pressed(k) => {

@@ -40,7 +40,7 @@ export component ExcludeObjectPanel inherits BasePanel {
                     alignment: center;
                     
                     Text { text: "Current Object:"; color: Theme.accent; font-size: 14px; }
-                    Text { text: root.current-object; font-size: 18px; color: Theme.text; font-weight: bold; horizontal-alignment: center; }
+                    Text { text: root.current-object; font-size: 18px; color: Theme.text; font-weight: 700; horizontal-alignment: center; }
                     
                     Button {
                         text: "Exclude Current";
@@ -56,7 +56,7 @@ export component ExcludeObjectPanel inherits BasePanel {
         // Right List of all objects
         VerticalLayout {
             spacing: 10px;
-            Text { text: "Print Objects List"; color: Theme.accent; font-weight: bold; }
+            Text { text: "Print Objects List"; color: Theme.accent; font-weight: 700; }
             
             ScrollView {
                 VerticalLayout {
@@ -75,7 +75,7 @@ export component ExcludeObjectPanel inherits BasePanel {
                                 text: obj.name;
                                 font-size: 15px;
                                 color: obj.excluded ? Theme.error : Theme.text;
-                                font-weight: bold;
+                                font-weight: 700;
                                 vertical-alignment: center;
                             }
 
@@ -86,7 +86,7 @@ export component ExcludeObjectPanel inherits BasePanel {
                             if obj.excluded : Text {
                                 text: "Excluded";
                                 color: Theme.error;
-                                font-weight: bold;
+                                font-weight: 700;
                                 vertical-alignment: center;
                             }
                         }

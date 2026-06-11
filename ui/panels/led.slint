@@ -44,7 +44,7 @@ export component LedPanel inherits BasePanel {
         // Strip Selector View (if not selected yet)
         if root.has-multiple-strips && !root.is-strip-selected : VerticalLayout {
             spacing: 10px;
-            Text { text: "Select LED strip to edit:"; color: Theme.accent; font-weight: bold; }
+            Text { text: "Select LED strip to edit:"; color: Theme.accent; font-weight: 700; }
             for strip in root.led-strips : Rectangle {
                 background: Theme.panel-bg;
                 border-radius: 5px;
@@ -53,7 +53,7 @@ export component LedPanel inherits BasePanel {
                 HorizontalLayout {
                     padding-left: 15px;
                     padding-right: 15px;
-                    Text { text: strip; color: Theme.text; vertical-alignment: center; font-weight: bold; }
+                    Text { text: strip; color: Theme.text; vertical-alignment: center; font-weight: 700; }
                     Text { text: "➔"; color: Theme.active; vertical-alignment: center; }
                 }
             }
@@ -70,14 +70,14 @@ export component LedPanel inherits BasePanel {
                 
                 if root.has-multiple-strips : HorizontalLayout {
                     alignment: space-between;
-                    Text { text: "Editing: " + root.selected-led; color: Theme.accent; font-weight: bold; }
+                    Text { text: "Editing: " + root.selected-led; color: Theme.accent; font-weight: 700; }
                     Button { text: "Strips"; clicked => { root.is-strip-selected = false; } }
                 }
 
                 // Red
                 HorizontalLayout {
                     spacing: 10px;
-                    Text { text: "Red"; color: #ff5252; width: 45px; vertical-alignment: center; font-weight: bold; }
+                    Text { text: "Red"; color: #ff5252; width: 45px; vertical-alignment: center; font-weight: 700; }
                     Slider {
                         minimum: 0.0;
                         maximum: 1.0;
@@ -90,7 +90,7 @@ export component LedPanel inherits BasePanel {
                 // Green
                 HorizontalLayout {
                     spacing: 10px;
-                    Text { text: "Green"; color: #4caf50; width: 45px; vertical-alignment: center; font-weight: bold; }
+                    Text { text: "Green"; color: #4caf50; width: 45px; vertical-alignment: center; font-weight: 700; }
                     Slider {
                         minimum: 0.0;
                         maximum: 1.0;
@@ -103,7 +103,7 @@ export component LedPanel inherits BasePanel {
                 // Blue
                 HorizontalLayout {
                     spacing: 10px;
-                    Text { text: "Blue"; color: #2196f3; width: 45px; vertical-alignment: center; font-weight: bold; }
+                    Text { text: "Blue"; color: #2196f3; width: 45px; vertical-alignment: center; font-weight: 700; }
                     Slider {
                         minimum: 0.0;
                         maximum: 1.0;
@@ -116,7 +116,7 @@ export component LedPanel inherits BasePanel {
                 // White
                 if root.has-white-channel : HorizontalLayout {
                     spacing: 10px;
-                    Text { text: "White"; color: Theme.text; width: 45px; vertical-alignment: center; font-weight: bold; }
+                    Text { text: "White"; color: Theme.text; width: 45px; vertical-alignment: center; font-weight: 700; }
                     Slider {
                         minimum: 0.0;
                         maximum: 1.0;
@@ -133,7 +133,7 @@ export component LedPanel inherits BasePanel {
                 
                 // Color Preview Box
                 Rectangle {
-                    background: Color.from-rgb(
+                    background: rgb(
                         Math.round(root.r-channel * 255), 
                         Math.round(root.g-channel * 255), 
                         Math.round(root.b-channel * 255)
@@ -146,14 +146,14 @@ export component LedPanel inherits BasePanel {
                         color: (root.r-channel + root.g-channel + root.b-channel) > 1.5 ? #000000 : #ffffff;
                         horizontal-alignment: center;
                         vertical-alignment: center;
-                        font-weight: bold;
+                        font-weight: 700;
                     }
                 }
 
                 // Presets Grid
                 VerticalLayout {
                     spacing: 8px;
-                    Text { text: "Presets"; color: Theme.text; font-size: 14px; font-weight: bold; }
+                    Text { text: "Presets"; color: Theme.text; font-size: 14px; font-weight: 700; }
                     
                     GridLayout {
                         spacing: 8px;

@@ -33,7 +33,7 @@ export component ZCalibratePanel inherits BasePanel {
 
             if !root.is-calibrating : VerticalLayout {
                 spacing: 10px;
-                Text { text: "Select Calibration:"; color: Theme.accent; font-weight: bold; }
+                Text { text: "Select Calibration:"; color: Theme.accent; font-weight: 700; }
                 
                 // Simplified command list selector
                 for cmd in root.available-commands : Rectangle {
@@ -63,7 +63,7 @@ export component ZCalibratePanel inherits BasePanel {
                     border-radius: 4px;
                     height: 40px;
                     TouchArea { clicked => { root.abort-calibration(); } }
-                    Text { text: "Abort"; color: Theme.bg; font-weight: bold; horizontal-alignment: center; vertical-alignment: center; }
+                    Text { text: "Abort"; color: Theme.bg; font-weight: 700; horizontal-alignment: center; vertical-alignment: center; }
                 }
             }
             
