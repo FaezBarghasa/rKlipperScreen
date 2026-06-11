@@ -4,6 +4,7 @@ use libc::{close, open, O_RDONLY, O_RDWR, O_WRONLY};
 use std::fs;
 use std::os::unix::ffi::OsStrExt;
 use std::os::unix::io::RawFd;
+use std::os::fd::{OwnedFd, FromRawFd};
 use std::path::Path;
 use std::thread;
 use std::time::Duration;
@@ -54,20 +55,18 @@ impl CalibrationMatrix {
 struct Interface;
 
 impl LibinputInterface for Interface {
-    fn open_restricted(&mut self, path: &Path, flags: i32) -> Result<RawFd, i32> {
+    fn open_restricted(&mut self, path: &Path, flags: i32) -> Result<OwnedFd, i32> {
         let c_path = std::ffi::CString::new(path.as_os_str().as_bytes()).map_err(|_| -1)?;
         let fd = unsafe { open(c_path.as_ptr(), flags) };
         if fd < 0 {
             Err(std::io::Error::last_os_error().raw_os_error().unwrap_or(-1))
         } else {
-            Ok(fd)
+            Ok(unsafe { OwnedFd::from_raw_fd(fd) })
         }
     }
 
-    fn close_restricted(&mut self, fd: RawFd) {
-        unsafe {
-            close(fd);
-        }
+    fn close_restricted(&mut self, fd: OwnedFd) {
+        // fd will automatically close when it goes out of scope and drops
     }
 }
 
@@ -75,7 +74,7 @@ pub fn run_input_listener() {
     let mut input = Libinput::new_with_udev(Interface);
     
     if let Err(e) = input.udev_assign_seat("seat0") {
-        eprintln!("Failed to assign udev seat: {}", e);
+        eprintln!("Failed to assign udev seat: {:?}", e);
         return;
     }
     

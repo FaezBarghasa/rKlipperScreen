@@ -10,12 +10,12 @@ slint::include_modules!();
 /// Checks system environments to intelligently fallback to DRM/KMS if X11 or Wayland aren't active.
 fn configure_display_backend() {
     if env::var("WAYLAND_DISPLAY").is_ok() {
-        env::set_var("SLINT_BACKEND", "winit");
+        unsafe { env::set_var("SLINT_BACKEND", "winit"); }
     } else if env::var("DISPLAY").is_ok() {
-        env::set_var("SLINT_BACKEND", "winit");
+        unsafe { env::set_var("SLINT_BACKEND", "winit"); }
     } else {
         // Bound to bare metal. Run without seats directly on /dev/dri/card0
-        env::set_var("SLINT_BACKEND", "linuxkms-noseat");
+        unsafe { env::set_var("SLINT_BACKEND", "linuxkms-noseat"); }
     }
 }
 

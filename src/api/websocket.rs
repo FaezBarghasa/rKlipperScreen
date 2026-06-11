@@ -14,7 +14,7 @@ pub async fn connect_to_moonraker(ui_handle: Weak<RKlipperScreen>) {
 
     // Implements reconnection handling to ensure production robustness
     loop {
-        let (ws_stream, _) = match connect_async(url.clone()).await {
+        let (ws_stream, _) = match connect_async(url.as_str()).await {
             Ok(stream) => stream,
             Err(_) => {
                 sleep(Duration::from_secs(3)).await;
@@ -36,7 +36,7 @@ pub async fn connect_to_moonraker(ui_handle: Weak<RKlipperScreen>) {
             "id": 1
         });
 
-        if write.send(Message::Text(subscribe_msg.to_string())).await.is_err() {
+        if write.send(Message::Text(subscribe_msg.to_string().into())).await.is_err() {
             sleep(Duration::from_secs(3)).await;
             continue;
         }
@@ -52,7 +52,7 @@ pub async fn connect_to_moonraker(ui_handle: Weak<RKlipperScreen>) {
                                     let ui_clone = ui_handle.clone();
                                     let _ = slint::invoke_from_event_loop(move || {
                                         if let Some(ui) = ui_clone.upgrade() {
-                                            ui.set_hotend_temp(temp_str.into());
+                                            ui.set_hotend_temp(slint::SharedString::from(temp_str));
                                         }
                                     });
                                 }
@@ -63,7 +63,7 @@ pub async fn connect_to_moonraker(ui_handle: Weak<RKlipperScreen>) {
                                     let ui_clone = ui_handle.clone();
                                     let _ = slint::invoke_from_event_loop(move || {
                                         if let Some(ui) = ui_clone.upgrade() {
-                                            ui.set_bed_temp(temp_str.into());
+                                            ui.set_bed_temp(slint::SharedString::from(temp_str));
                                         }
                                     });
                                 }
